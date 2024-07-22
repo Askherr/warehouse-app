@@ -18,12 +18,15 @@ class KaryawanSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('karyawans')->insert([
+        for ($i = 0; $i < 100; $i++) {
+            DB::table("karyawans")->insert([
+        // DB::table('karyawans')->insert([
             'nama' => fake()->name,
             'jabatan'=> fake()->jobTitle(),
             'pt'=> fake()->company(),
-            'join_date'=> fake()->date,
+            'join_date'=> fake()->dateTimeThisDecade(now()),
             'no_sepatu'=> fake()->numberBetween(43,50),
+            'created_at'=>now(),
         ]);
-    }
+    }}
 }
