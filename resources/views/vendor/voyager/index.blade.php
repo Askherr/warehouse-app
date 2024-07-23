@@ -18,7 +18,7 @@
                         <div style="font-weight:bold; color: white; font-size:large; border-radius:20px;" class="card text-center mb-3">
                             <div style="background-color: #211C6A;" class="card-header">Jumlah Karyawan</div>
                             <div class="card-body">
-                                <h4 style="color: black;" class="card-title">{{ $jumlahKaryawan }}</h4>
+                                <h4 style="color: black;" class="card-title" id="jumlahkaryawan"></h4>
                             </div>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                         <div style="font-weight:bold;color: white; font-size:large; border-radius:20px;" class="card text-center mb-3">
                             <div style="background-color: #59B4C3;" class="card-header">Jumlah Barang Masuk</div>
                             <div class="card-body">
-                                <h4 style="color: black;" class="card-title">{{ $jumlahBarangMasuk }}</h4>
+                                <h4 style="color: black;" class="card-title" id="jumlahbarangmasuk"></h4>
                             </div>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                     <div style="font-weight:bold;color: white; font-size:large; border-radius:20px;" class="card text-center mb-3">
                         <div style="background-color: #74E291;" class="card-header">Jumlah Barang Keluar</div>
                         <div class="card-body">
-                            <h4 style="color: black;" class="card-title">{{ $jumlahBarangKeluar }}</h4>
+                            <h4 style="color: black;" class="card-title" id="jumlahbarangkeluar" ></h4>
                         </div>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                     <div style="font-weight:bold;color: white; font-size:large; border-radius:20px;" class="card text-center mb-3">
                         <div style="background-color:#EFF396;" class="card-header">Stok Total</div>
                         <div class="card-body">
-                            <h4 style="color: black;" class="card-title">{{ $jumlahStok }}</h4>
+                            <h4 style="color: black;" class="card-title" id="jumlahstok"></h4>
                         </div>
                     </div>
                 </div>
@@ -70,33 +70,47 @@
 
     </div>
 
+
     <script>
-        var ctx = document.getElementById('myPieChart').getContext('2d');
-        var myPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Jumlah Karyawan', 'Barang Masuk', 'Barang Keluar', 'Stok Total'],
-                datasets: [{
-                    data: [{{ $jumlahKaryawan }}, {{ $jumlahBarangMasuk }}, {{ $jumlahBarangKeluar }}, {{ $jumlahStok }}],
-                    backgroundColor: ['#211C6A', '#59B4C3', '#74E291', '#EFF396'],
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw;
-                            }
-                        }
-                    }
-                }
-            }
-        })
+        $('document').ready(function() {
+        $.ajax({
+                    type: "GET",
+                    url: "{{ route('dashboard') }}",
+                    dataType: "json",
+                    success: function(res) {
+                        $("#jumlahkaryawan").html(res["jumlahkaryawan"])
+                        $("#jumlahbarangmasuk").html(res["jumlahbarangmasuk"])
+                        $("#jumlahbarangkeluar").html(res["jumlahbarangkeluar"])
+                        $("#jumlahstok").html(res["jumlahstok"])
+
+
+                        var ctx = document.getElementById('myPieChart').getContext('2d');
+                            var myPieChart = new Chart(ctx, {
+                                type: 'pie',
+                                data: {
+                                    labels: ['Jumlah Karyawan', 'Barang Masuk', 'Barang Keluar', 'Stok Total'],
+                                    datasets: [{
+                                        
+                                        data: [res["jumlahkaryawan"],res["jumlahbarangmasuk"],res["jumlahbarangkeluar"],res["jumlahstok"]],
+                                        backgroundColor: ['#211C6A', '#59B4C3', '#74E291', '#EFF396'],
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            position: 'top',
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(tooltipItem) {
+                                                    return tooltipItem.label + ': ' + tooltipItem.raw;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            })
         ;
         const barCtx = document.getElementById('myBarChart').getContext('2d');
         const myBarChart = new Chart(barCtx, {
@@ -106,7 +120,7 @@
                 datasets: [{
                     label: 'Jumlah',
                     // data: [65, 59, 80, 81, 56, 55],
-                    data: [{{ $jumlahKaryawan }}, {{ $jumlahBarangMasuk }}, {{ $jumlahBarangKeluar }}, {{ $jumlahStok }}],
+                    data: [res["jumlahkaryawan"],res["jumlahbarangmasuk"],res["jumlahbarangkeluar"],res["jumlahstok"]],
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
@@ -121,7 +135,8 @@
                     }
                 }
             }});
-
+                         }
+                });})
     </script>
 <style>
     #myPieChart{
